@@ -48,6 +48,9 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
 
     private static void verifyPlayers() {
         while (true) {
+            if (players.size() == 0){
+                started = false;
+            }
             if (players.size() >= 3) {
                 System.out.println("More than 3 players");
                 if (!started) {
