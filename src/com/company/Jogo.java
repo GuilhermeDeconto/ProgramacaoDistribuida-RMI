@@ -55,7 +55,14 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
                         try {
                             String connectLocation = "//" + value + "/Jogador/" + key;
                             JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
-                            jogador.inicia();
+                            Thread thread = new Thread(() -> {
+                                try {
+                                    jogador.inicia();
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            thread.start();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
