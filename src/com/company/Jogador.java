@@ -4,16 +4,23 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Random;
 
 public class Jogador extends UnicastRemoteObject implements JogadorInterface {
     private static final long serialVersionUID = -4613845962359855373L;
     private static boolean quit = false;
 
+    private static int playerId;
+
+    private static JogoInterface jogo = null;
+
+    private static boolean changed = false;
+
     public Jogador() throws RemoteException {
     }
 
     public static void main(String[] args) {
-        int result = 0;
+        playerId = 0;
 
         if (args.length != 2) {
             System.out.println("Usage: java Jogador <ip local> <servidor>");
@@ -38,7 +45,6 @@ public class Jogador extends UnicastRemoteObject implements JogadorInterface {
         String remoteHostName = args[1];
         String connectLocation = "//" + remoteHostName + "/Jogo";
 
-        JogoInterface jogo = null;
         try {
             System.out.println("Connecting to server at : " + connectLocation);
             jogo = (JogoInterface) Naming.lookup(connectLocation);
@@ -49,39 +55,50 @@ public class Jogador extends UnicastRemoteObject implements JogadorInterface {
 
         // registra
         try {
-            result = jogo.registra();
+            playerId = jogo.registra();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < 50; i++) {
-            try {
-                if (quit) {
-                    return;
-                }
-                // joga
-                System.out.printf("Jogada numero %d%n", i + 1);
-                jogo.joga(result);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-            }
-        }
-
-        // encerra
         try {
-            jogo.encerra(result);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+            Naming.rebind("Jogador/" + playerId, new Jogador());
+            System.out.println("Jogador Server was rebinded to Jogador/" + playerId);
+        } catch (Exception e) {
+            System.out.println("Jogador Serverfailed: " + e);
         }
     }
 
     public void encerrado() {
         System.out.println("encerrado");
         quit = true;
+    }
+
+    @Override
+    public void inicia() throws RemoteException {
+        for (int i = 0; i < 50; i++) {
+            try {
+                if (quit) {
+                    break;
+                }
+                System.out.printf("Jogada numero %d%n", i + 1);
+                jogo.joga(playerId);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            try {
+                Random random = new Random();
+                int time = random.nextInt(1001) + 500;
+                Thread.sleep(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        // encerra
+        try {
+            jogo.encerra(playerId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void cutucado() {
