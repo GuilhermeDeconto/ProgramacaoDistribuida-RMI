@@ -7,7 +7,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Random;
 
 public class Jogador extends UnicastRemoteObject implements JogadorInterface {
-    private static final long serialVersionUID = -4613845962359855373L;
     private static boolean quit = false;
 
     private static int playerId;

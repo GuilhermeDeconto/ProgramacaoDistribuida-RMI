@@ -9,7 +9,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class Jogo extends UnicastRemoteObject implements JogoInterface {
-    private static final long serialVersionUID = 2520268900833408151L;
     private static String clientHost = "localhost";
 
     private final Random random = new Random();
