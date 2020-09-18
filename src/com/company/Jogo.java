@@ -14,7 +14,8 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
 
     private final Random random = new Random();
 
-    private static Timer timer = new Timer();
+    private static Timer pokeTimer = new Timer();
+    private static Timer mainTimer = new Timer();
 
     private static Map<Integer, String> players = new HashMap<>();
 
@@ -24,7 +25,7 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
 
     public static void main(String[] args) {
-    	Sound.tossacoin.loop();
+        Sound.tossacoin.loop();
         if (args.length != 1) {
             System.out.println("Usage: java Jogo <servidor>");
             System.exit(1);
@@ -48,45 +49,44 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
     }
 
     private static void verifyPlayers() {
-        while (true) {
-            if (players.size() == 0){
-                started = false;
-            }
-            if (players.size() >= 3) {
-                System.out.println("More than 3 players");
-                if (!started) {
-                    players.forEach((key, value) -> {
-                        try {
-                            String connectLocation = "//" + value + "/Jogador/" + key;
-                            JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
-                            Thread thread = new Thread(() -> {
-                                try {
-                                    jogador.inicia();
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            thread.start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    cutuca();
-                    started = true;
+        mainTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (players.size() == 0) {
+                    started = false;
                 }
-            } else {
-                System.out.println("Waiting for players");
+                if (players.size() >= 3) {
+                    if (!started) {
+                        System.out.println("More than 3 players");
+                        System.out.println("Starting game....");
+                        players.forEach((key, value) -> {
+                            try {
+                                String connectLocation = "//" + value + "/Jogador/" + key;
+                                JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
+                                Thread thread = new Thread(() -> {
+                                    try {
+                                        jogador.inicia();
+                                    } catch (RemoteException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                                thread.start();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        cutuca();
+                        started = true;
+                    }
+                } else {
+                    System.out.println("Waiting for players");
+                }
             }
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        }, 0, 1000);
     }
 
     private static void cutuca() {
-        timer.scheduleAtFixedRate(new TimerTask() {
+        pokeTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 players.forEach((key, value) -> {
