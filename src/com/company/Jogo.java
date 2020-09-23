@@ -28,7 +28,7 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
     public static void main(String[] args) {
         Sound.tossacoin.loop();
         if (args.length != 2) {
-            System.out.println("Usage: java Jogo <servidor>");
+            System.out.println("Usage: java Jogo <servidor> <quantidade de jogadores>");
             System.exit(1);
         }
 
