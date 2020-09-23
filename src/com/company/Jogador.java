@@ -61,7 +61,7 @@ public class Jogador extends UnicastRemoteObject implements JogadorInterface {
 
         try {
             Naming.rebind("Jogador/" + playerId, new Jogador());
-            System.out.println("Jogador Server was rebinded to Jogador/" + playerId);
+            System.out.println("Jogador address was rebinded to Jogador/" + playerId);
         } catch (Exception e) {
             System.out.println("Jogador Serverfailed: " + e);
         }
