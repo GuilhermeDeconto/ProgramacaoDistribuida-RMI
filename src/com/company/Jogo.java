@@ -20,14 +20,22 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
 
     private static Boolean started = false;
 
+    private static int numberOfPlayers = 3;
+
     public Jogo() throws RemoteException {
     }
 
     public static void main(String[] args) {
         Sound.tossacoin.loop();
-        if (args.length != 1) {
+        if (args.length != 2) {
             System.out.println("Usage: java Jogo <servidor>");
             System.exit(1);
+        }
+
+        try {
+            numberOfPlayers = Integer.parseInt(args[1]);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         try {
@@ -54,9 +62,9 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
                 if (players.size() == 0) {
                     started = false;
                 }
-                if (players.size() >= 3) {
+                if (players.size() >= numberOfPlayers) {
                     if (!started) {
-                        System.out.println("More than 3 players");
+                        System.out.printf("There are %d players online%n", numberOfPlayers);
                         System.out.println("Starting game....");
                         players.forEach((key, value) -> {
                             try {
