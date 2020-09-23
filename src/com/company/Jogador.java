@@ -22,7 +22,7 @@ public class Jogador extends UnicastRemoteObject implements JogadorInterface {
         playerId = 0;
 
         if (args.length != 2) {
-            System.out.println("Usage: java Jogador <ip local> <servidor>");
+            System.out.println("Usage: java Jogador <ip local> <ip servidor>");
             System.exit(1);
         }
 
@@ -67,13 +67,13 @@ public class Jogador extends UnicastRemoteObject implements JogadorInterface {
         }
     }
 
-    public void encerrado() {
+    public void finaliza() {
         System.out.println("encerrado");
         quit = true;
     }
 
     @Override
-    public void inicia() throws RemoteException {
+    public void inicia() {
         for (int i = 0; i < 50; i++) {
             try {
                 if (quit) {
@@ -100,7 +100,7 @@ public class Jogador extends UnicastRemoteObject implements JogadorInterface {
         }
     }
 
-    public void cutucado() {
+    public void cutuca() {
         System.out.println("cutucado");
     }
 }

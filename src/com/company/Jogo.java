@@ -28,7 +28,7 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
     public static void main(String[] args) {
         Sound.tossacoin.loop();
         if (args.length != 2) {
-            System.out.println("Usage: java Jogo <servidor> <quantidade de jogadores>");
+            System.out.println("Usage: java Jogo <ip servidor> <quantidade de jogadores>");
             System.exit(1);
         }
 
@@ -100,7 +100,7 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
                     try {
                         String connectLocation = "//" + value + "/Jogador/" + key;
                         JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
-                        jogador.cutucado();
+                        jogador.cutuca();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -143,7 +143,7 @@ public class Jogo extends UnicastRemoteObject implements JogoInterface {
                 String connectLocation = "//" + value + "/Jogador/" + key;
                 try {
                     JogadorInterface jogador = (JogadorInterface) Naming.lookup(connectLocation);
-                    jogador.encerrado();
+                    jogador.finaliza();
                     System.out.printf("Jogador %d foi encerrado!%n", id);
                 } catch (MalformedURLException | RemoteException | NotBoundException e) {
                     e.printStackTrace();
